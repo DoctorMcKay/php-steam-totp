@@ -1,0 +1,17 @@
+{
+	"name": "doctormckay/steam-totp",
+	"description": "PHP library to deal with Steam's proprietary TOTP algorithm",
+	"type": "library",
+	"license": "MIT",
+	"authors": [
+		{
+			"name": "Alexander Corn",
+			"email": "mckay@doctormckay.com"
+		}
+	],
+	"autoload": {
+		"psr-4": {
+			"SteamTotp\\": "src/"
+		}
+	}
+}

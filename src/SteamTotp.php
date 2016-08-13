@@ -1,4 +1,10 @@
 <?php
+namespace SteamTotp;
+
+/**
+ * Class SteamTotp
+ * @package DoctorMcKay
+ */
 class SteamTotp {
     const CHARSET = '23456789BCDFGHJKMNPQRTVWXY';
     const CODE_LENGTH = 5;
@@ -44,8 +50,30 @@ class SteamTotp {
         return base64_encode($hmac);
     }
 
+    /**
+     * Queries the Steam servers for their time, then subtracts our local time from it to get our offset.
+     * The offset is how many seconds we are *behind* Steam. Therefore, *add* this number to our local time to get Steam time.
+     * You can pass this value to getAuthCode as-is with no math involved.
+     * @return int|false false on failure
+     */
     public static function getTimeOffset() {
-        // TODO
+        $ch = curl_init("http://api.steampowered.com/ITwoFactorService/QueryTime/v1/");
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Length: 0']);
+        $response = curl_exec($ch);
+        curl_close($ch);
+
+        if (!$response) {
+            return false;
+        }
+
+        $response = json_decode($response, true);
+        if (!$response || !isset($response['response']) || !isset($response['response']['server_time'])) {
+            return false;
+        }
+
+        return $response['response']['server_time'] - time();
     }
 
     /**
