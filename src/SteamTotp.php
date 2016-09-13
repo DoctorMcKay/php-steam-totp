@@ -16,7 +16,7 @@ class SteamTotp {
      * @return string
      */
     public static function getAuthCode($shared_secret, $time_offset = 0) {
-        $hmac = hash_hmac('sha1', pack('J', floor((time() + $time_offset) / 30)), self::bufferizeSecret($shared_secret), true);
+        $hmac = hash_hmac('sha1', pack('NN', 0, floor((time() + $time_offset) / 30)), self::bufferizeSecret($shared_secret), true);
         $start = unpack('c19trash/Cstart', $hmac);
         $start = $start['start'] & 0x0F;
 
@@ -41,9 +41,9 @@ class SteamTotp {
      */
     public static function getConfirmationKey($identity_secret, $time, $tag) {
         if (empty($tag)) {
-            $buf = pack('J', $time);
+            $buf = pack('NN', 0, $time);
         } else {
-            $buf = pack('Ja*', $time, $tag);
+            $buf = pack('NNa*', 0, $time, $tag);
         }
 
         $hmac = hash_hmac('sha1', $buf, self::bufferizeSecret($identity_secret), true);
