@@ -86,14 +86,11 @@ class SteamTotp {
     }
 
     private static function bufferizeSecret($secret) {
-        if (preg_match('/[0-9a-fA-F]{40}/', $secret)) {
+        if (preg_match('/[0-9a-f]{40}/i', $secret)) {
             return pack('H*', $secret);
-        }
-
-        if (preg_match('/^(?:[A-Za-z0-9+\/]{4})*(?:[A-Za-z0-9+\/]{2}==|[A-Za-z0-9+\/]{3}=|[A-Za-z0-9+\/]{4})$/', $secret)) {
+        }else{
             return base64_decode($secret);
         }
-
         return $secret;
     }
 }
